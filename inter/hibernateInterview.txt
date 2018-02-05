@@ -1,0 +1,132 @@
+What is the difference between get and load in Hibernate?
+What is the difference between save, persist and saveOrUpdate methods in Hibernate?
+What is named SQL query in Hibernate?
+What is SessionFactory in Hibernate? is SessionFactory thread-safe?
+What is Session in Hibernate? Can we share single Session among multiple threads in Hibernate?
+What is the difference between sorted and ordered collection in hibernate?
+What is the difference between transient, a persistent and detached object in Hibernate?
+What does Session lock() method do in Hibernate?
+
+
+
+Q=Hibernate SessionFactory is thread safe?
+Ans=Internal state of SessionFactory is immutable, so it’s thread safe. Multiple threads can access it simultaneously to get Session instances.
+
+
+Q=new features in hibernate 5?
+
+Ans=new features in hibernate 5 :-
+
+Support classes of the Date and Time API as BasicTypes-
+
+The new Date and Time API was one of the most anticipated changes in Java 8. The old java.util.Date has a lot of issues which got finally fixed.
+
+@Entity
+public class Book {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = “id”, updatable = false, nullable = false)
+	private Long id;
+	
+	private LocalDate publishingDate;
+
+	
+
+Get query results as a Stream:-
+
+Stream<Object[]> books = session.createNativeQuery("SELECT b.title, b.publishingDate FROM book b").stream();
+books.map(b -> new BookValue((String)b[0], (Date)b[1]))
+	.map(b -> b.getTitle() + " was published on " + b.getPublishingDate())
+	.forEach(m -> log.info(m));
+	
+	
+Fetch multiple entities by their primary key:-	
+
+	Hibernate 5.1 introduced a third option that avoids the issues of the first and is easier to use than the second one. 
+	The new MultiIdentifierLoadAccess interface provides a comfortable option to load multiple entities with one query. 
+	You just need to call the byMultipleIds method on the Hibernate Session to get a MultiIdentifierLoadAccess 
+	interface and provide a list of primary key values to the multiLoad method.
+	
+	MultiIdentifierLoadAccess<Book> multi = session.byMultipleIds(Book.class);
+List<Book> books = multi.multiLoad(1L, 2L, 3L);
+
+
+@Repeatable annotations:-
+
+Repeatable annotations are one of the smaller changes in Java 8. 
+It allows you to annotate a class, attribute or interface with the same annotation multiple times. 
+A typical JPA example in which you want to do that is defining multiple named queries for an entity.
+	
+	in hibernate 4:
+	
+	@Entity
+@NamedQueries({
+	@NamedQuery(name = “Book.findByTitle”, query = “SELECT b FROM Book b WHERE b.title = :title”),
+	@NamedQuery(name = “Book.findByPublishingDate”, query = “SELECT b FROM Book b WHERE b.publishingDate = :publishingDate”)
+})
+public class Book implements Serializable {
+	…
+}
+
+
+
+in hibernate 5:
+
+@Entity
+@NamedQuery(name = “Hibernate5Book.findByTitle”, query = “SELECT b FROM Hibernate5Book b WHERE b.title = :title”)
+@NamedQuery(name = “Hibernate5Book.findByPublishingDate”, query = “SELECT b FROM Hibernate5Book b WHERE b.publishingDate = :publishingDate”)
+public class Hibernate5Book implements Serializable {
+	…
+}
+	
+
+Q=What is Session in Hibernate? Can we share single Session among multiple threads in Hibernate?
+Ans=Hibernate Session is the interface between java application layer and hibernate. 
+This is the core interface used to perform database operations.
+ Lifecycle of a session is bound by the beginning and end of a transaction.
+ they are not thread-safe, it means you can not share Hibernate Session between multiple threads. 
+ Though Session obtains database connection lazily it's good to close session as soon as you are done with it.
+
+ Q=What is difference between openSession and getCurrentSession?
+ Ans=Hibernate SessionFactory getCurrentSession() method returns the session bound to the context. 
+ But for this to work, we need to configure it in hibernate configuration file. 
+ Since this session object belongs to the hibernate context, we don’t need to close it. Once the session factory is closed, 
+ this session object gets closed.
+
+<property name="hibernate.current_session_context_class">thread</property>
+
+Hibernate SessionFactory openSession() method always opens a new session. We should close this session object once we are done with 
+all the database operations. We should open a new session for each request in multi-threaded environment.
+
+
+Q=What is difference between Hibernate Session get() and load() method?
+
+Ans=Hibernate session comes with different methods to load data from database. get and load are most used methods, at first look they seems 
+similar but there are some differences between them.
+
+1>get() loads the data as soon as it’s called whereas load() returns a proxy object and loads data only when it’s actually required, so load() 
+is better because it support lazy loading.
+2>Since load() throws exception when data is not found, we should use it only when we know data exists.
+3>We should use get() when we want to make sure data exists in the database.
+
+No.	get()	                                                load()
+1)	Returns null if object is not found.	                                Throws ObjectNotFoundException if object is not found.
+2)	get() method always hit the database.	                                load() method doesn't hit the database.
+3)	It returns real object not proxy.	                                    It returns proxy object.
+4)	It should be used if you are not sure about the existence of instance.	It should be used if you are sure that instance exists.
+
+
+Q=What does Session lock() method do in Hibernate?
+Ans=Session's lock() method reattach object without synchronizing or updating with the database. So you need to be very careful while 
+using lock() method. By the way, you can always use Session's update() method to sync with the database during reattachment.
+
+
+Q=when to use SingletonEhCacheRegionFactory vs. EhCacheRegionFactory for Hibernate 2nd-level cache in a Web Application?
+Ans=EhCache will ensure that all instances of SingletonEhCacheRegionFactory use the same actual CacheManager internally, no matter how many instances of SingletonEhCacheRegionFactory you create, making it a crude version of the Singleton design pattern.
+
+The plain EhCacheRegionFactory, on the other hand, will get a new CacheManager every time.
+
+If you have two Hibernate session factories in Spring, each using their own instance of SingletonEhCacheRegionFactory, then they're actually going to end up sharing a lot of their cache state, which may account for your problem.
+
+This isn't really a good match for Spring, where the singletons are supposed to be managed by the container. If you use EhCacheRegionFactory, then you'll likely get more predictable results. I suggest giving it a go and see how you get on.

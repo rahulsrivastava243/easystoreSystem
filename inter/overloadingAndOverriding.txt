@@ -1,0 +1,22 @@
+1) What is method overloading in Java?
+2) What is method overriding in Java?
+3) What is method hiding in Java?
+13) Can we override a method which throws run-time exception without throws clause?
+Yes, you can. There is no restriction on throwing RuntimeException from overriding method. So if your original method throws NullPointerException than its not necessary to throw NPE from overriding method as well.
+
+18. How to make ArrayList read only in Java? 
+ArrayList readableList = new ArrayList();
+        readableList.add("Jeffrey Archer");
+        readableList.add("Khalid Hussain");
+      
+        List unmodifiableList = Collections.unmodifiableList(readableList);
+      
+        //add will throw Exception because List is readonly
+        unmodifiableList.add("R.K. Narayan");
+      
+        //remove is not allowed in unmodifiable list
+        unmodifiableList.remove(0);
+      
+        //set is not allowed in unmodifiable List
+        unmodifiableList.set(0, "Anurag Kashyap");
+      
