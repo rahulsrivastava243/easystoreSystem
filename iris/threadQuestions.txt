@@ -1,0 +1,27 @@
+Q=why wait called from synchronized?
+Ans= to avoid racecondition between thread.
+
+Q=whay wait and notify in Object?
+Ans= b/c thread don't have any information related to other thread and lock are based on object not on thread.
+
+Q= why @destroy , suspend(), and resume(), stop() is depricated?
+Ans= @destroy :- it dosn't release the lock on shared resource. so dedloack can be create.
+
+suspend() and resume():- after suspend if any thread tries to accure lock before calling resume then it will go for forever waiting.So deadlock.
+
+ stop() :- It may left the shared object in curupted mode.For other thread. Although it releases the lock imidiatly.
+ 
+ 
+ Q=Runnable vs thread?
+ Ans= multiple inharitance is not supported in the case of java. (Thread class).
+ On exteding thread we inherit all the properties of thread in the class. which makes it heavy wait then Runnable.
+ we should try for best practices by coding for interface ,by using Runnable.
+ Same runnable object can be executed by multiple thread but by extending thread we need to create new Thread always as Threads are started only once.
+ 
+ 
+ 
+ 
+ 
+
+ 
+

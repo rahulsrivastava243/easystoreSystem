@@ -1,0 +1,244 @@
+Notes
+
+Binary Heap can be used for solving algorithmic problems, like the following -
+
+• Finding top 10 most frequently used words in a very large file in O(n)
+• Finding top 1 million numbers from a given large file containing 5 billion numbers in O(n)
+• You have a file with 1 trillion numbers, but memory can hold only 1 million, How would you find the lowest 1
+million out of all these numbers ?
+Hint - Create a binary-max-heap with 1 million capacity, so the largest number will be at the top. Now go
+over each number in the file, compare it with the peek(), if it is smaller then poll() the element and add the
+new one. The total complexity should be less than O (n log n). Selection Rank algorithm could also be used
+to solve this problem, provided there exists no duplicate number.
+
+
+What is technique to sort data that is too large to bring into memory ?
+
+1. To sort data that is residing on secondary storage (disc, tape, etc) rather than in main memory (primary
+storage), we use a sorting technique that is called external sort. There could be two different scenario where
+data can not fit into main memory -
+
+• Items to be sorted are themselves too large to fit into main memory (files, images, audio, video, etc), but
+there are not many items. In this case we can only sort the keys and a value indicating the location of data
+on disc. After the key-value pairs are sorted as per required criteria, the data is rearranged on disc into
+correct order.
+
+• Items to be sorted are too many to fit into main memory at one time, but the items themselves are small
+enough to fit into memory (age, employee data, dates, numbers, strings, etc). In this case the data can
+be divided in to partitions that fit into main memory, and then resulting files can be merged into single file.
+Merge Sort or Radix sort can be used as external sorting technique in this case.
+
+
+You have a mixed pile of N nuts and N bolts and need to quickly find the corresponding
+pairs of nuts and bolts. Each nut matches exactly one bolt, and each
+bolt matches exactly one nut. By fitting a nut and bolt together, you can see which is
+bigger. But it is not possible to directly compare two nuts or two bolts. Given an efficient
+method for solving the problem.
+
+This can be solved quickly using a customized Quick Sort algorithm.
+A simple modification of Quicksort shows that there are randomized algorithms whose expected number of
+comparisons (and running time) are O(n log n).
+Approach
+Pick a random bolt and compare it to all the nuts, find its matching nut and compare it to all the bolts (they
+match, the nut is larger, the nut is small). This will divide the problem into two problems, one consisting of nuts
+and bolts smaller than the matched pair and the other consisting of larger pairs. Repeat and divide this until all
+the nuts and bolts are matched. This is very similar to quick sort in action and achieving the result in O(n log n)
+time.
+
+
+
+Your are give a file with 1 million numbers in it. How would you find the 20
+biggest numbers out of this file?
+
+There are multiple ways to solve this problem.
+
+Sorting Approach (Slow on time)
+
+Sort all the numbers and pick the first 20. If we use Merge Sort Algorithm to sort elements (as used by Java 6
+Collections.sort(List<T> list) ) then this will take at least O(n log n) time complexity and O(n) memory, where N
+is 1 million in this case.
+
+Max Heap (PriorityQueue in Java) Approach (Preferred)
+Create a Max heap with size of 20. Now traverse all the elements from the source file using a stream and push
+it to heap if the minimum element in the heap is less than the current element.
+This will take require a constant size of O(k) where k = 20
+Complexity of inserting an item to a PriorityQueue (Heap based) is O(log N) where N =20 in this case. Hence
+the overall Time Complexity for this approach would be O(n log k) where N = 1 million and K=20.
+
+
+
+How an elevator decides priority of a given request. Suppose you are in an
+elevator at 5th floor and one person presses 7th floor and then 2nd presses 8th floor.
+which data structure will be helpful to prioritize the requests?
+
+Generally elevator's software maintains two different queues - one for the upward traversal and another for
+downward traversal along with the direction flag which holds the current direction of movement. At any given
+point in time, only single queue is active for the serving the requests, though both the queues can enqueue
+requests.
+PriorityQueue is used for storing the user requests where priority is decided based on following algorithm.
+For upward movement PriorityQueue
+The floor number with lower value has the higher priority.
+For downward movement PriorityQueue
+The floor number with higher value has the higher priority.
+Requests are removed from the PiorityQueue as soon as they are served. If current floor is 5th and user
+presses 4th floor with upward moving elevator, then the requests are queued to the downward movement
+priority queue (which is not yet active)
+
+
+
+How would you count word occurrence in a very large file ? How to keep track
+of top 10 occurring words?
+
+Questions worth asking - can file fit into main memory ?, how many distinct words are there in the file ?
+
+Please note that there are limited number of natural language words available and all of them can be easily fit
+into today's computer RAM. For example oxford English dictionary contains total of around 0.6 million words.
+
+We will discuss two approaches to solve this problem -
+Approach 1 : Find the Top K Occurrence count using a hashmap and min-heap (PriorityQueue in Java)
+Pseudocode for the algorithm
+1. Finding the Word Occurrence Count - Stream the words into a HashMap (put operation is Big O(1))
+keeping the value as word occurrence count. On every word occurrence, update the word count.
+
+2. Track Top K occurring Words Using Binary Min Heap (PriorityQueue with Natural ordering) - This can be
+achieved by maintaining a binary min heap of max size K, and then for each word count in hashmap -
+i. Check if the heap size if less than K - then add the new word count to min heap. Otherwise
+ii. Check if the peek element (that is minimum value in binary min heap) is less than the new word count,
+and if it is, then remove the existing number and insert the new word count into min heap.
+iii. When we are done traversing the entire word-counts then we will have heap containing the top K
+frequently occurring words.
+
+Approach 4 : Diving Data File into multiple if unique words are too big
+
+If the number of unique words are too big to fit into main memory of computer, then we can use hashing
+technique to divide the words into different files and start processing those files one by one.
+Pseudo algorithm
+• Create N output files
+• Fetch words from big data file
+• For each word, calculate the hashcode
+• output file sequence = hashcode%N (where N is appropriately set according to the main memory available)
+• Now all duplicate words will go into same file, so we can count the word frequency from each output file
+separately and append them into a final merged file.
+
+Approach 5 : Another Divide and Conquer approach
+
+1. Read the file and write all words starting with A to file A.txt, words starting with B to file B.txt ... words
+starting with Z to file Z.txt.
+2. If any of these files are still greater than your memory limit, divide the large files again using their second
+letters, i.e. words starting with AA goes into file AA.txt, words starting with AB goes into file AB.txt etc.
+3. Since a word cannot appear in two different files now, you can easily count all words at each file and merge
+the results without further calculations.
+4. You can divide each file in only one pass, so it would take linear time to divide the files. Then, you can
+count words in each file and merge the files in linear time.
+
+Approach 6 : Utilizes Distributed Computing (Map-Reduce Approach)
+1. Distribute your text files on different nodes as per their memory capacity to hold the entire data into
+memory.
+2. Calculate each word frequency within the node. (Either using hashtable, parallel stream, unix command,
+space compressed prefix tree, etc)
+3. Collect each result in a master node and combine them all. Here we are assuming that the unique words
+will fit into main computer's memory.
+4. Either sort the results or build a min-heap with capacity of 10 and store top 10 occurrences in that minheap.
+Java's PriorityQueue can be used to build a min-heap. You can also take a TreeMap in step 3 to
+store the results in sorted manner.
+
+
+How would you sort 900 MB of data using 100 MB of RAM ?
+What is external sort ?
+
+Algorithm1
+External Merge Sort is the answer to the above mentioned problem.
+
+1. Read 100 MB of data in main memory and sort by some conventional method like quicksort.
+2. Write the sorted data to the disk.
+3. Repeat step 1 & 2 until all the data is in sorted 100 MB chunks (9 chunks) which now need to be merged
+into single output file.
+4. Read first 10 MB of each sorted chunk into input buffer in main memory and allocate remaining 10 MB for
+the output buffer.
+5. Perform 9 way merge and store the result in output buffer.
+Lets try to understand this with a concrete example,
+Imagine you have numbers 1-9,
+{9 7 2 6 3 4 8 5 1}
+And lets suppose that only 3 fit in the main memory.
+So break the data into 3 chunks, sort each, store in separate files. The contents of 3 files will now become
+2 7 9
+3 4 6
+1 5 8
+Now you would open each of 3 files as streams and read the first value from each.
+2 3 1
+Output the lowest value 1, and get the next value from that stream, now you have
+2 3 5
+output the next lowest value , 2 and continue onwards until you have outputted the entire sorted list.
+
+
+There are 2 huge files A and B which contains numbers in sorted order. Make a combined file C which contains
+the total sorted order.
+
+Solution
+Merge Sort technique.
+Question
+There are k files each containing millions of numbers. How would you create a combined sort file out of these ?
+Solution
+• Use a binary-min heap (increasing order, smallest at the top) of size k, where k is the number of files.
+• Read first record from all the k files into the heap.
+• Loop until all k files are empty.
+• Poll() the minimum element from the binary heap, and append it to the file.
+• Read the next element from the file from which the minimum element came.
+• If some file has no more element, then remove it from the loop.
+• In this way we will have one big file with all number sorted
+• Time complexity will be O (n log k)
+
+
+There is a pricing service which connects to Reuters & Bloomberg and fetches
+the latest price for the given Instrument Tics. There could be multiple price events
+for the same Stock and we need to consider the latest one. Design a service to show
+prices for the Top 10 stocks of the Day ?
+
+This problems requires us to collect price feeds from PricingService, remove duplicates based on InstrTic
+keeping the latest one, and then finally capture the top 10 feeds based on price. Keeping in mind that we
+need to remove duplicates based on Tic# and then sorting based on price i.e. 2 different fields for two different
+operations.
+Maintaining Uniqueness based on Tic#
+HashSet is a good option for removing duplicates from the collection, so iterate over the entire collection of
+feeds and then add them to HashSet, rest will be taken care by HashSet. But we need to override equals and
+hashcode based on Tic# so as to remove the duplicate TIC# entries.
+Finding Top 10 price ranked Stocks
+Now for finding top 10 feeds based on prices, we can use PriorityQueue (min heap) of fixed size 10, with a
+Stock Price comparator. While iterating over the HashSet entries we will check if the price of the feed is greater
+than the peek entry of PriorityQueue, if yes then poll the entry and offer the new one. This way we will get a list
+of top 10 priced feeds.
+
+
+
+How would you design an elevator system for multi story building? Provide
+with request scheduling algorithm & Class diagram for the design.
+
+For a single elevator system, normally two different queues are used to store the requests. One queue is
+used to store upward requests and other queue used to store the downward requests. Queue implementation
+used is the BlockingPriorityQueue which maintains the priority of its requests based on the floor numbers.
+For upward motion, the lower floor number has the higher priority and opposite for the downward motion of
+elevator. A 2 bit flag can be used to store the current direction of the elevator where 00 represents Idle, 01 for
+upward motion, 11 for the downward motion.
+A Bit Vector can be used to map the floor numbers, and if someone presses the floor button then the
+corresponding bit can be set to true, and a request is pushed to the queue. This will solve the duplicate request
+problem from outside the elevator at the same floor. As soon as the floor request is served, the corresponding
+bit is cleared and the request is removed from the queue.
+The actual software application for handling elevator requires lot of interaction with the hardware and is out of
+scope for this book.
+
+
+Given two log files, each with a billion username (each username appended
+to the log file), find the username existing in both documents in the most efficient
+manner?
+
+Hashing technique could be utilized to solve this problem.
+Pseudo Code
+for 1st file
+read each line,
+hash into their abc..xyz buckets depending on the start of the letter of the word. (26 buckets for A to Z to form
+something like a 26 by xxx table)
+then sort each 26 rows in the hash table and delete duplicates
+for 2nd file
+sort and delete duplicates
+for each line/name, find match in the hashtable created earlier.
+if match found, output to another file name.
