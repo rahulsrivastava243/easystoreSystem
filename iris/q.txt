@@ -1,0 +1,25 @@
+﻿Suppose there are Stock exchange as a Shared object. Multiple threads are already accessing this object by taking lock. But the next transaction depends on previous transaction and when second transaction occurs count get increase by 1. How will 
+
+Given number of cores of processor how will you decide the number of threads in thread pool.
+
+There are multiple threads executing in parallel, can you provide lock to second thread.
+
+If we have millions of numbers and we want to add them. We have enough CPU. How will you design the solution for this?
+
+
+Scenario – There are 4 integers (a,b,c & d), you need to add {a & b} and {c & d} separately, then multiply the results of both using Executor framework.
+
+
+Suppose, there are some attributes in data from each stream (lets say, value, source, destination etc), we need to avoid reading the duplicate data on the basis of these attributes. How can we achieve it?
+
+4 streams are writing data to a particular location and we have to start our application only after all data by 4 streams are placed .  
+
+ In which scenario hashtable is better in comparison of concurrent hash map in multithreading environment .
+
+
+jawa007
+
+https://github.com/jawa007
+ 
+ 
+ 
