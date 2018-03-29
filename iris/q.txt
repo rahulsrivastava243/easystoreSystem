@@ -24,4 +24,6 @@ https://github.com/jawa007
 http://zguide.zeromq.org/page:all
  
  
+ http://es6-features.org/#ObjectPropertyAssignment
+ 
  
